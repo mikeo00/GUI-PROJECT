@@ -1,0 +1,44 @@
+﻿javac : 
+GameSocket.java:12: 
+error: cannot find 
+symbol
+At line:1 char:1
++ javac 
+GameSocket.java 2>&1 
+| Out-File -FilePath 
+compile.log 
+-Encoding ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (GameSoc   
+ ket.java...not f    
+ind symbol:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+    private 
+Controller 
+controller;
+            ^
+  symbol:   class 
+Controller
+  location: class 
+GameSocket
+GameSocket.java:17: 
+error: cannot find 
+symbol
+    public void setCo
+ntroller(Controller 
+controller) {
+                     
+         ^
+  symbol:   class 
+Controller
+  location: class 
+GameSocket
+2 errors
