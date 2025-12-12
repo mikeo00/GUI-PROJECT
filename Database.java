@@ -104,7 +104,7 @@ public class Database {
         try {
             PreparedStatement checkStmt = connection.prepareStatement(checkPlayer);
             checkStmt.setString(1, playerName);
-            ResultSet rs = checkStmt.getResultSet();
+            ResultSet rs = checkStmt.executeQuery(); // FIX: Execute query before accessing results
             
             if (!rs.next()) {
                 // Player doesn't exist, insert
@@ -167,6 +167,46 @@ public class Database {
         
         JTable table = new JTable(model);
         table.setEnabled(false); // Make it read-only
+        return table;
+    }
+    
+    public JTable getGamesTable() {
+        DefaultTableModel model = new DefaultTableModel(
+                new String[]{"Game #", "Player 1", "Player 2", "Winner", "P1 Hits", "P2 Hits", "Date"}, 0);
+        
+        if (!isConnected) {
+            model.addRow(new Object[]{"--", "Database not connected", "--", "--", "--", "--", "--"});
+            JTable table = new JTable(model);
+            table.setEnabled(false);
+            return table;
+        }
+        
+        String query = "SELECT id, player1_name, player2_name, winner, player1_hits, player2_hits, game_date " +
+                      "FROM games " +
+                      "ORDER BY game_date DESC " +
+                      "LIMIT 50";
+        
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String player1 = rs.getString("player1_name");
+                String player2 = rs.getString("player2_name");
+                String winner = rs.getString("winner");
+                int p1Hits = rs.getInt("player1_hits");
+                int p2Hits = rs.getInt("player2_hits");
+                Timestamp gameDate = rs.getTimestamp("game_date");
+                
+                model.addRow(new Object[]{id, player1, player2, winner, p1Hits, p2Hits, gameDate});
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving games.");
+            e.printStackTrace();
+        }
+        
+        JTable table = new JTable(model);
+        table.setEnabled(false);
         return table;
     }
     

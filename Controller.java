@@ -254,6 +254,9 @@ public class Controller {
         if (model.isReady) {
             view.updateStatus("Ready! Waiting for opponent...");
             model.gameStatus = "Ready - Waiting for opponent";
+            
+            // Send player name when becoming ready (both players are listening now)
+            gameSocket.sendPlayerName(model.playerName);
             gameSocket.sendReady();
             
             // Check if opponent was already ready
@@ -331,32 +334,57 @@ public class Controller {
         JScrollPane scrollPane = new JScrollPane(leaderboardTable);
         scrollPane.setPreferredSize(new Dimension(600, 400));
         
-        JOptionPane.showMessageDialog(null, scrollPane, "Leaderboard - Top Players", JOptionPane.PLAIN_MESSAGE);
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.add(scrollPane, BorderLayout.CENTER);
+        
+        JButton viewGamesButton = new JButton("View Game History");
+        viewGamesButton.addActionListener(e -> showGameHistory());
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(viewGamesButton);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
+        
+        JOptionPane.showMessageDialog(null, panel, "Leaderboard - Top Players", JOptionPane.PLAIN_MESSAGE);
+    }
+    
+    private void showGameHistory() {
+        if (database == null) {
+            JOptionPane.showMessageDialog(null, "Database not connected!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        JTable gamesTable = database.getGamesTable();
+        JScrollPane scrollPane = new JScrollPane(gamesTable);
+        scrollPane.setPreferredSize(new Dimension(800, 400));
+        
+        JOptionPane.showMessageDialog(null, scrollPane, "Game History - Recent 50 Games", JOptionPane.PLAIN_MESSAGE);
     }
 
     public void playAgain() {
-        // Full Nuclear Restart
-        // 1. Detach and close socket
-        if (gameSocket != null) {
-            gameSocket.setController(null);
-            gameSocket.close();
-        }
+        model.rematchRequested = true;
+        gameSocket.sendRematchRequest();
+        view.updateStatus("Waiting for opponent to accept rematch...");
         
-        // 2. Dispose old view
-        if (view != null) {
-            view.dispose();
+        if (model.opponentRematchRequested) {
+            gameSocket.sendRematchAccept();
+            resetGameForRematch();
         }
-        
-        // 3. Start fresh
-        SwingUtilities.invokeLater(() -> {
-            Controller newController = new Controller();
-            new View(newController);
-        });
+    }
+    
+    private void resetGameForRematch() {
+        model.resetForRematch();
+        view.resetForRematch();
+        updateShipCounts();
+        view.updateStatus("Rematch! Place your ships");
     }
     
     // Socket callback methods
     public void onOpponentConnected() {
         view.updateStatus("Opponent connected! Place your ships");
+    }
+    
+    public void sendPlayerName() {
+        System.out.println("Sending player name: " + model.playerName);
+        gameSocket.sendPlayerName(model.playerName);
     }
     
     public void onConnectionFailed() {
@@ -497,7 +525,7 @@ public class Controller {
         // Save to database (in background thread)
         try {
             if (database != null) {
-                String opponentName = "Opponent"; 
+                String opponentName = model.opponentName.isEmpty() ? "Opponent" : model.opponentName;
                 database.saveGameResult(model.playerName, opponentName, model.playerName, 
                                        model.myHits, model.opponentHits);
             }
@@ -516,7 +544,7 @@ public class Controller {
         // Save to database
         try {
             if (database != null) {
-                String opponentName = "Opponent";
+                String opponentName = model.opponentName.isEmpty() ? "Opponent" : model.opponentName;
                 database.saveGameResult(model.playerName, opponentName, opponentName,
                                        model.myHits, model.opponentHits);
             }
@@ -529,6 +557,29 @@ public class Controller {
             view.stopTimer();
             view.showLossDialog();
         });
+    }
+    
+    public void onPlayerNameReceived(String name) {
+        System.out.println("Received opponent name: " + name + " (isServer: " + gameSocket.isServer() + ")");
+        model.opponentName = name;
+        SwingUtilities.invokeLater(() -> {
+            view.setOpponentName(name);
+            view.updateStatus("Playing against " + name + " - Place your ships");
+        });
+    }
+    
+    public void onRematchRequest() {
+        model.opponentRematchRequested = true;
+        view.updateStatus(model.opponentName + " wants a rematch!");
+        
+        if (model.rematchRequested) {
+            gameSocket.sendRematchAccept();
+            resetGameForRematch();
+        }
+    }
+    
+    public void onRematchAccept() {
+        resetGameForRematch();
     }
 }
 

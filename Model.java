@@ -19,9 +19,12 @@ public class Model {
     
     // Game state
     public String playerName = "";
+    public String opponentName = "";
     public boolean isReady = false;
     public boolean opponentReady = false; // Track opponent readiness
     public boolean isMyTurn = false;
+    public boolean rematchRequested = false;
+    public boolean opponentRematchRequested = false;
     public int timeLeft = 30;
     
     // Current ship placement
@@ -92,5 +95,25 @@ public class Model {
         isReady = false;
         myHits = 0;
         opponentHits = 0;
+    }
+    
+    public void resetForRematch() {
+        smallShipsPlaced = 0;
+        mediumShipsPlaced = 0;
+        largeShipsPlaced = 0;
+        placedShips.clear();
+        initializeGrids();
+        reset();
+        isReady = false;
+        opponentReady = false;
+        myHits = 0;
+        opponentHits = 0;
+        isMyTurn = false;
+        timeLeft = 30;
+        rematchRequested = false;
+        opponentRematchRequested = false;
+        lastAttackRow = -1;
+        lastAttackCol = -1;
+        waitingForResult = false;
     }
 }

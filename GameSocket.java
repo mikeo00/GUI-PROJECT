@@ -93,6 +93,11 @@ public class GameSocket {
         String command = parts[0];
         
         switch (command) {
+            case "PLAYER_NAME":
+                String opponentName = parts.length > 1 ? parts[1] : "Opponent";
+                controller.onPlayerNameReceived(opponentName);
+                break;
+                
             case "READY":
                 controller.onOpponentReady();
                 break;
@@ -115,6 +120,14 @@ public class GameSocket {
                 
             case "WIN":
                 controller.onOpponentWins();
+                break;
+                
+            case "REMATCH_REQUEST":
+                controller.onRematchRequest();
+                break;
+                
+            case "REMATCH_ACCEPT":
+                controller.onRematchAccept();
                 break;
                 
             case "CHAT":
@@ -145,6 +158,18 @@ public class GameSocket {
     
     public void sendWin() {
         sendMessage("WIN");
+    }
+    
+    public void sendPlayerName(String name) {
+        sendMessage("PLAYER_NAME:" + name);
+    }
+    
+    public void sendRematchRequest() {
+        sendMessage("REMATCH_REQUEST");
+    }
+    
+    public void sendRematchAccept() {
+        sendMessage("REMATCH_ACCEPT");
     }
     
     public void sendChat(String message) {

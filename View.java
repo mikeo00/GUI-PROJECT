@@ -22,6 +22,7 @@ public class View {
     private JLabel turnLabel = new JLabel("YOUR TURN", SwingConstants.CENTER);
     private JLabel gameNameLabel = new JLabel("BATTLESHIP", SwingConstants.CENTER);
     private JLabel playerNameLabel = new JLabel("PLAYER: ", SwingConstants.CENTER);
+    private JLabel opponentNameLabel = new JLabel("OPPONENT: ...", SwingConstants.CENTER);
     private JButton rulesButton = new JButton("RULES");
     private JLabel timerLabel = new JLabel("TIME: 30s", SwingConstants.CENTER);
     
@@ -81,7 +82,7 @@ public class View {
     }
     
     private void setupTopPanel() {
-        topPanel.setLayout(new GridLayout(1, 5, 5, 5));
+        topPanel.setLayout(new GridLayout(1, 6, 5, 5));
         topPanel.setBackground(new Color(52, 73, 94));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
@@ -90,6 +91,7 @@ public class View {
         styleLabel(gameNameLabel, Color.WHITE);
         gameNameLabel.setFont(new Font("Arial", Font.BOLD, 20));
         styleLabel(playerNameLabel, Color.CYAN);
+        styleLabel(opponentNameLabel, Color.ORANGE);
         styleLabel(timerLabel, Color.YELLOW);
         
         rulesButton.setBackground(Color.WHITE);
@@ -98,6 +100,7 @@ public class View {
         topPanel.add(turnLabel);
         topPanel.add(gameNameLabel);
         topPanel.add(playerNameLabel);
+        topPanel.add(opponentNameLabel);
         topPanel.add(rulesButton);
         topPanel.add(timerLabel);
     }
@@ -240,6 +243,29 @@ public class View {
     
     public void updateStatus(String status) {
         statusLabel.setText(status);
+    }
+    
+    public void setOpponentName(String name) {
+        opponentNameLabel.setText("OPPONENT: " + name);
+    }
+    
+    public void resetForRematch() {
+        // Reset grids
+        Color oceanBlue = new Color(41, 128, 185);
+        for (int r = 0; r < 8; r++) {
+            for (int c = 0; c < 8; c++) {
+                myGrid[r][c].setBackground(oceanBlue);
+                opponentGrid[r][c].setBackground(oceanBlue);
+            }
+        }
+        
+        // Reset UI
+        setReadyButton(false);
+        turnLabel.setText("YOUR TURN");
+        turnLabel.setForeground(Color.RED);
+        timerLabel.setText("TIME: 30s");
+        timerLabel.setForeground(Color.YELLOW);
+        stopTimer();
     }
     
     public void updateTimer(int seconds) {
