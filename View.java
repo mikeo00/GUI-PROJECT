@@ -20,7 +20,7 @@ public class View {
     
     // Top panel components
     private JLabel turnLabel = new JLabel("YOUR TURN", SwingConstants.CENTER);
-    private JLabel gameNameLabel = new JLabel("BATTLESHIP", SwingConstants.CENTER);
+    private JLabel gameNameLabel = new JLabel("AQUASTRIKE", SwingConstants.CENTER);
     private JLabel playerNameLabel = new JLabel("PLAYER: ", SwingConstants.CENTER);
     private JLabel opponentNameLabel = new JLabel("OPPONENT: ...", SwingConstants.CENTER);
     private JButton rulesButton = new JButton("RULES");
