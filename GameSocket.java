@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.*;
 
 public class GameSocket {
-    private java.net.Socket socket;
+    private Socket socket;
     private ServerSocket serverSocket;
     private BufferedReader in;
     private PrintWriter out;

@@ -37,18 +37,35 @@ public class Controller {
             options,
             options[0]);
         
+        // Exit if user clicks X or Cancel (choice is -1 when closed)
+        if (choice == -1 || choice == JOptionPane.CLOSED_OPTION) {
+            System.exit(0);
+        }
+        
         if (choice == 0) {
             // Host game
             String portStr = JOptionPane.showInputDialog(null, "Enter port (default 12345):", "12345");
-            int port = portStr != null && !portStr.isEmpty() ? Integer.parseInt(portStr) : 12345;
+            // Exit if user cancels the port dialog
+            if (portStr == null) {
+                System.exit(0);
+            }
+            int port = !portStr.isEmpty() ? Integer.parseInt(portStr) : 12345;
             gameSocket.startServer(port);
             view.updateStatus("Hosting on port " + port + ". Waiting for opponent...");
         } else if (choice == 1) {
             // Join game
             String host = JOptionPane.showInputDialog(null, "Enter host IP address:", "localhost");
+            // Exit if user cancels the host dialog
+            if (host == null) {
+                System.exit(0);
+            }
             String portStr = JOptionPane.showInputDialog(null, "Enter port:", "12345");
-            int port = portStr != null && !portStr.isEmpty() ? Integer.parseInt(portStr) : 12345;
-            gameSocket.connectToServer(host != null ? host : "localhost", port);
+            // Exit if user cancels the port dialog
+            if (portStr == null) {
+                System.exit(0);
+            }
+            int port = !portStr.isEmpty() ? Integer.parseInt(portStr) : 12345;
+            gameSocket.connectToServer(host.isEmpty() ? "localhost" : host, port);
             view.updateStatus("Connecting to " + host + ":" + port + "...");
         }
     }
@@ -88,10 +105,13 @@ public class Controller {
     
     private void resetCurrentShipOnly() {
         // Clear only the current ship being placed
-        for (Point p : model.currentShipCells) {
-            view.myGrid[p.x][p.y].setBackground(new Color(41, 128, 185));
-            model.myGrid[p.x][p.y] = "EMPTY";
-        }
+    	for (int i = 0; i < model.currentShipCells.size(); i++) {
+    	    Point p = model.currentShipCells.get(i);
+    	    
+    	    view.myGrid[p.x][p.y].setBackground(new Color(41, 128, 185));
+    	    model.myGrid[p.x][p.y] = "EMPTY";
+    	}
+
         model.reset();
     }
 
@@ -124,7 +144,8 @@ public class Controller {
         }
 
         // Prevent clicking same cell twice
-        for (Point p : model.currentShipCells) {
+        for (int i = 0; i < model.currentShipCells.size(); i++) {
+            Point p = model.currentShipCells.get(i);
             if (p.x == r && p.y == c) return;
         }
 
@@ -582,4 +603,3 @@ public class Controller {
         resetGameForRematch();
     }
 }
-

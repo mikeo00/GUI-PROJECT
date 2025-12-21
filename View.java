@@ -56,7 +56,6 @@ public class View {
         setupBottomPanel();
         setupTimer();
         
-        f.setVisible(true);
     }
     
     public void dispose() {
@@ -76,6 +75,7 @@ public class View {
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(1200, 800);
         f.setLayout(new BorderLayout(10, 10));
+        f.setVisible(true);
         f.add(topPanel, BorderLayout.NORTH);
         f.add(centerPanel, BorderLayout.CENTER);
         f.add(bottomPanel, BorderLayout.SOUTH);
