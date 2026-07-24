@@ -97,22 +97,8 @@ public class Controller {
             return;
         }
 
-        // Reset ONLY current incomplete ship placement (not all ships!)
-        resetCurrentShipOnly();
         model.currentShipSize = shipSize;
         view.updateStatus("Selected " + getShipName(shipSize) + " ship - Place " + shipSize + " cells");
-    }
-    
-    private void resetCurrentShipOnly() {
-        // Clear only the current ship being placed
-    	for (int i = 0; i < model.currentShipCells.size(); i++) {
-    	    Point p = model.currentShipCells.get(i);
-    	    
-    	    view.myGrid[p.x][p.y].setBackground(new Color(41, 128, 185));
-    	    model.myGrid[p.x][p.y] = "EMPTY";
-    	}
-
-        model.reset();
     }
 
     private String getShipName(int size) {
@@ -223,7 +209,6 @@ public class Controller {
 
         updateShipCounts();
 
-        // Reset for next ship
         model.reset();
 
         if (model.allShipsPlaced()) {
@@ -240,11 +225,7 @@ public class Controller {
         view.updateShipCount(smallLeft, mediumLeft, largeLeft);
     }
 
-    public void resetShipPlacement() {
-        // Clear only current incomplete ship
-        resetCurrentShipOnly();
-        view.updateStatus("Current ship placement cleared");
-    }
+
 
     public void clearAllShips() {
         // Clear all ships
@@ -439,8 +420,6 @@ public class Controller {
         model.myHits = 0;
         model.opponentHits = 0;
         
-        // Disable ship placement
-        // ... (rest of logic handled by checking isReady in click handlers)
         
         if (myTurnFirst) {
             model.timeLeft = 30;

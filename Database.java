@@ -104,7 +104,7 @@ public class Database {
         try {
             PreparedStatement checkStmt = connection.prepareStatement(checkPlayer);
             checkStmt.setString(1, playerName);
-            ResultSet rs = checkStmt.executeQuery(); // FIX: Execute query before accessing results
+            ResultSet rs = checkStmt.executeQuery();
             
             if (!rs.next()) {
                 // Player doesn't exist, insert
@@ -115,7 +115,7 @@ public class Database {
                 insertStmt.setInt(4, hits);
                 insertStmt.executeUpdate();
             } else {
-                // Player exists, update
+                // Player exists update
                 PreparedStatement updateStmt = connection.prepareStatement(updatePlayer);
                 updateStmt.setInt(1, won ? 1 : 0);
                 updateStmt.setInt(2, won ? 0 : 1);
@@ -166,7 +166,7 @@ public class Database {
         }
         
         JTable table = new JTable(model);
-        table.setEnabled(false); // Make it read-only
+        table.setEnabled(false); // Make it read only
         return table;
     }
     

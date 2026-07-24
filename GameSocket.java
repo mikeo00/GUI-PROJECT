@@ -131,11 +131,6 @@ public class GameSocket {
                 controller.onRematchAccept();
                 break;
                 
-            case "CHAT":
-                String chatMessage = parts[1];
-                System.out.println("Opponent: " + chatMessage);
-                break;
-                
             default:
                 System.err.println("Unknown command: " + command);
         }
@@ -171,10 +166,6 @@ public class GameSocket {
     
     public void sendRematchAccept() {
         sendMessage("REMATCH_ACCEPT");
-    }
-    
-    public void sendChat(String message) {
-        sendMessage("CHAT:" + message);
     }
     
     private void sendMessage(String message) {

@@ -58,16 +58,12 @@ public class View {
         
     }
     
-    public void dispose() {
-        f.dispose();
-    }
-    
     private void showNameDialog() {
-        String name = JOptionPane.showInputDialog(null, "Enter your name:", "Player Name", JOptionPane.QUESTION_MESSAGE);
+        String name = JOptionPane.showInputDialog(null, "Enter your name:", "Player");
         if (name != null && !name.trim().isEmpty()) {
             cont.setPlayerName(name.trim());
         } else {
-            cont.setPlayerName("Player");
+            System.exit(0);
         }
     }
     
@@ -107,7 +103,7 @@ public class View {
     
     private void setupCenterPanel() {
         centerPanel.setLayout(new GridLayout(1, 3, 10, 10));
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10,10 , 10));
         centerPanel.setBackground(new Color(44, 62, 80));
         
         // Ship selector panel (left)
